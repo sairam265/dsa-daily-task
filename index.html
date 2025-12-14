@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Day DSA Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <header class="bg-white shadow-sm border-b-2 border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">10-Day DSA Challenge</h1>
+                </div>
+                <div class="bg-indigo-50 px-4 py-2 rounded-lg">
+                    <span id="progress" class="font-semibold text-indigo-900">0/20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Progress</h2>
+                    <div id="dayProgress" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <span id="dayLabel" class="text-indigo-200 font-medium"></span>
+                                    <span class="text-indigo-200">•</span>
+                                    <span id="problemLabel" class="text-indigo-200 font-medium"></span>
+                                </div>
+                                <h2 id="problemTitle" class="text-2xl font-bold text-white"></h2>
+                            </div>
+                            <span id="difficulty" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Problem Description</h3>
+                                <p id="description" class="text-gray-700"></p>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-4 border">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Example</h3>
+                                <pre id="example" class="text-gray-700 font-mono text-sm whitespace-pre-wrap"></pre>
+                            </div>
+
+                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Test Case</h3>
+                                <pre id="testCase" class="text-gray-700 font-mono text-sm"></pre>
+                                <p class="text-gray-600 text-sm mt-2"><span class="font-semibold">Expected:</span> <span id="expectedOutput"></span></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-900 mb-2">Your Python Solution</label>
+                                <textarea id="userAnswer" placeholder="def solution():&#10;    # Your code here&#10;    pass" class="w-full px-4 py-3 border-2 rounded-lg focus:border-indigo-500 font-mono text-sm" rows="10"></textarea>
+                            </div>
+
+                            <div id="errorBox" class="hidden bg-red-50 border-2 border-red-200 rounded-lg p-4">
+                                <p id="errorMessage" class="text-red-700 font-medium"></p>
+                            </div>
+
+                            <div id="successBox" class="hidden bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                                <p class="text-green-700 font-medium">✓ Correct! Moving to next problem...</p>
+                            </div>
+
+                            <button id="submitBtn" onclick="handleSubmit()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all text-lg">Submit Solution</button>
+
+                            <div class="border-t-2 pt-6 mt-6">
+                                <div class="bg-gray-50 rounded-lg p-6 border-2">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Need Help?</h3>
+                                    <p class="text-sm text-gray-600 mb-3">Enter secret code to reveal solution</p>
+                                    <div class="flex space-x-3">
+                                        <input type="password" id="secretCode" onkeypress="if(event.key==='Enter') handleSecretCode()" placeholder="Enter code (112)" class="flex-1 px-4 py-2 border-2 rounded-lg"/>
+                                        <button onclick="handleSecretCode()" class="bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-800 font-semibold">Reveal</button>
+                                    </div>
+                                    <div id="solutionBox" class="hidden mt-4 bg-white rounded-lg p-4 border-2 border-green-300">
+                                        <div class="flex justify-between mb-2">
+                                            <h4 class="font-semibold text-green-800">Solution Revealed</h4>
+                                            <button onclick="hideSolution()" class="text-gray-500">✕</button>
+                                        </div>
+                                        <pre id="solutionCode" class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="completionBox" class="hidden mt-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl shadow-lg p-8 text-center">
+                    <h2 class="text-3xl font-bold text-white mb-2">🎉 Congratulations!</h2>
+                    <p class="text-white text-lg">You've completed all 20 DSA problems!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script>
+        const problems = [
+            {day:1,id:1,title:"Two Sum",difficulty:"Easy",description:"Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",example:"Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]",testCase:"nums = [3,2,4], target = 6",expectedOutput:"[1,2]",solution:"def twoSum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []"},
+            {day:1,id:2,title:"Valid Parentheses",difficulty:"Easy",description:"Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",example:"Input: s = '()[]{}'\nOutput: True",testCase:"s = '([)]'",expectedOutput:"False",solution:"def isValid(s):\n    stack = []\n    mapping = {')': '(', '}': '{', ']': '['}\n    for char in s:\n        if char in mapping:\n            if not stack or stack.pop() != mapping[char]:\n                return False\n        else:\n            stack.append(char)\n    return len(stack) == 0"},
+            {day:2,id:3,title:"Reverse Linked List",difficulty:"Easy",description:"Given the head of a singly linked list, reverse the list, and return the reversed list.",example:"Input: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]",testCase:"head = [1,2]",expectedOutput:"[2,1]",solution:"def reverseList(head):\n    prev = None\n    current = head\n    while current:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev"},
+            {day:2,id:4,title:"Maximum Subarray",difficulty:"Medium",description:"Given an integer array nums, find the subarray with the largest sum, and return its sum.",example:"Input: nums = [-2,1,-3,4,-1,2,1,-5,4]\nOutput: 6",testCase:"nums = [5,4,-1,7,8]",expectedOutput:"23",solution:"def maxSubArray(nums):\n    max_sum = current_sum = nums[0]\n    for num in nums[1:]:\n        current_sum = max(num, current_sum + num)\n        max_sum = max(max_sum, current_sum)\n    return max_sum"},
+            {day:3,id:5,title:"Binary Tree Inorder Traversal",difficulty:"Easy",description:"Given the root of a binary tree, return the inorder traversal of its nodes' values.",example:"Input: root = [1,null,2,3]\nOutput: [1,3,2]",testCase:"root = [1,2,3,4,5]",expectedOutput:"[4,2,5,1,3]",solution:"def inorderTraversal(root):\n    result = []\n    def inorder(node):\n        if not node:\n            return\n        inorder(node.left)\n        result.append(node.val)\n        inorder(node.right)\n    inorder(root)\n    return result"},
+            {day:3,id:6,title:"Longest Substring Without Repeating Characters",difficulty:"Medium",description:"Given a string s, find the length of the longest substring without repeating characters.",example:"Input: s = 'abcabcbb'\nOutput: 3",testCase:"s = 'pwwkew'",expectedOutput:"3",solution:"def lengthOfLongestSubstring(s):\n    char_set = set()\n    left = 0\n    max_length = 0\n    for right in range(len(s)):\n        while s[right] in char_set:\n            char_set.remove(s[left])\n            left += 1\n        char_set.add(s[right])\n        max_length = max(max_length, right - left + 1)\n    return max_length"},
+            {day:4,id:7,title:"Merge Two Sorted Lists",difficulty:"Easy",description:"Merge two sorted linked lists and return it as a sorted list.",example:"Input: list1 = [1,2,4], list2 = [1,3,4]\nOutput: [1,1,2,3,4,4]",testCase:"list1 = [1,3,5], list2 = [2,4,6]",expectedOutput:"[1,2,3,4,5,6]",solution:"def mergeTwoLists(list1, list2):\n    dummy = ListNode()\n    current = dummy\n    while list1 and list2:\n        if list1.val <= list2.val:\n            current.next = list1\n            list1 = list1.next\n        else:\n            current.next = list2\n            list2 = list2.next\n        current = current.next\n    current.next = list1 or list2\n    return dummy.next"},
+            {day:4,id:8,title:"3Sum",difficulty:"Medium",description:"Given an integer array nums, return all triplets [nums[i], nums[j], nums[k]] such that their sum equals 0.",example:"Input: nums = [-1,0,1,2,-1,-4]\nOutput: [[-1,-1,2],[-1,0,1]]",testCase:"nums = [0,0,0]",expectedOutput:"[[0,0,0]]",solution:"def threeSum(nums):\n    nums.sort()\n    result = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i-1]:\n            continue\n        left, right = i + 1, len(nums) - 1\n        while left < right:\n            total = nums[i] + nums[left] + nums[right]\n            if total == 0:\n                result.append([nums[i], nums[left], nums[right]])\n                while left < right and nums[left] == nums[left+1]:\n                    left += 1\n                while left < right and nums[right] == nums[right-1]:\n                    right -= 1\n                left += 1\n                right -= 1\n            elif total < 0:\n                left += 1\n            else:\n                right -= 1\n    return result"},
+            {day:5,id:9,title:"Valid Binary Search Tree",difficulty:"Medium",description:"Given the root of a binary tree, determine if it is a valid binary search tree (BST).",example:"Input: root = [2,1,3]\nOutput: True",testCase:"root = [5,1,4,null,null,3,6]",expectedOutput:"False",solution:"def isValidBST(root):\n    def validate(node, low=float('-inf'), high=float('inf')):\n        if not node:\n            return True\n        if node.val <= low or node.val >= high:\n            return False\n        return (validate(node.left, low, node.val) and \n                validate(node.right, node.val, high))\n    return validate(root)"},
+            {day:5,id:10,title:"Container With Most Water",difficulty:"Medium",description:"Given n non-negative integers representing heights, find two lines that together with the x-axis form a container that contains the most water.",example:"Input: height = [1,8,6,2,5,4,8,3,7]\nOutput: 49",testCase:"height = [4,3,2,1,4]",expectedOutput:"16",solution:"def maxArea(height):\n    left, right = 0, len(height) - 1\n    max_area = 0\n    while left < right:\n        width = right - left\n        max_area = max(max_area, min(height[left], height[right]) * width)\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return max_area"},
+            {day:6,id:11,title:"Climbing Stairs",difficulty:"Easy",description:"You are climbing a staircase with n steps. Each time you can climb 1 or 2 steps. How many distinct ways can you climb to the top?",example:"Input: n = 3\nOutput: 3",testCase:"n = 5",expectedOutput:"8",solution:"def climbStairs(n):\n    if n <= 2:\n        return n\n    prev2, prev1 = 1, 2\n    for i in range(3, n + 1):\n        current = prev1 + prev2\n        prev2 = prev1\n        prev1 = current\n    return prev1"},
+            {day:6,id:12,title:"Binary Tree Level Order Traversal",difficulty:"Medium",description:"Given the root of a binary tree, return the level order traversal of its nodes' values.",example:"Input: root = [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]",testCase:"root = [1,2,3,4,5]",expectedOutput:"[[1],[2,3],[4,5]]",solution:"def levelOrder(root):\n    if not root:\n        return []\n    result = []\n    queue = [root]\n    while queue:\n        level = []\n        for _ in range(len(queue)):\n            node = queue.pop(0)\n            level.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        result.append(level)\n    return result"},
+            {day:7,id:13,title:"Find First and Last Position in Sorted Array",difficulty:"Medium",description:"Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.",example:"Input: nums = [5,7,7,8,8,10], target = 8\nOutput: [3,4]",testCase:"nums = [5,7,7,8,8,10], target = 6",expectedOutput:"[-1,-1]",solution:"def searchRange(nums, target):\n    def findBound(isFirst):\n        left, right = 0, len(nums) - 1\n        bound = -1\n        while left <= right:\n            mid = (left + right) // 2\n            if nums[mid] == target:\n                bound = mid\n                if isFirst:\n                    right = mid - 1\n                else:\n                    left = mid + 1\n            elif nums[mid] < target:\n                left = mid + 1\n            else:\n                right = mid - 1\n        return bound\n    return [findBound(True), findBound(False)]"},
+            {day:7,id:14,title:"Product of Array Except Self",difficulty:"Medium",description:"Given an integer array nums, return an array where each element is the product of all elements except itself.",example:"Input: nums = [1,2,3,4]\nOutput: [24,12,8,6]",testCase:"nums = [-1,1,0,-3,3]",expectedOutput:"[0,0,9,0,0]",solution:"def productExceptSelf(nums):\n    n = len(nums)\n    result = [1] * n\n    left = 1\n    for i in range(n):\n        result[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        result[i] *= right\n        right *= nums[i]\n    return result"},
+            {day:8,id:15,title:"Number of Islands",difficulty:"Medium",description:"Given a 2D grid of '1's (land) and '0's (water), count the number of islands.",example:"Input: grid = [['1','1','0'],['1','1','0'],['0','0','1']]\nOutput: 2",testCase:"grid = [['1','0','1'],['0','0','0'],['1','0','1']]",expectedOutput:"3",solution:"def numIslands(grid):\n    if not grid:\n        return 0\n    count = 0\n    def dfs(i, j):\n        if i < 0 or i >= len(grid) or j < 0 or j >= len(grid[0]) or grid[i][j] == '0':\n            return\n        grid[i][j] = '0'\n        dfs(i+1, j)\n        dfs(i-1, j)\n        dfs(i, j+1)\n        dfs(i, j-1)\n    for i in range(len(grid)):\n        for j in range(len(grid[0])):\n            if grid[i][j] == '1':\n                count += 1\n                dfs(i, j)\n    return count"},
+            {day:8,id:16,title:"Kth Largest Element in Array",difficulty:"Medium",description:"Given an integer array nums and an integer k, return the kth largest element.",example:"Input: nums = [3,2,1,5,6,4], k = 2\nOutput: 5",testCase:"nums = [3,2,3,1,2,4,5,5,6], k = 4",expectedOutput:"4",solution:"def findKthLargest(nums, k):\n    import heapq\n    return heapq.nlargest(k, nums)[-1]"},
+            {day:9,id:17,title:"Course Schedule",difficulty:"Medium",description:"Given numCourses and prerequisites, return true if you can finish all courses.",example:"Input: numCourses = 2, prerequisites = [[1,0]]\nOutput: True",testCase:"numCourses = 2, prerequisites = [[1,0],[0,1]]",expectedOutput:"False",solution:"def canFinish(numCourses, prerequisites):\n    graph = {i: [] for i in range(numCourses)}\n    for course, prereq in prerequisites:\n        graph[course].append(prereq)\n    visited = [0] * numCourses\n    def hasCycle(course):\n        if visited[course] == 1:\n            return True\n        if visited[course] == 2:\n            return False\n        visited[course] = 1\n        for prereq in graph[course]:\n            if hasCycle(prereq):\n                return True\n        visited[course] = 2\n        return False\n    for course in range(numCourses):\n        if hasCycle(course):\n            return False\n    return True"},
+            {day:9,id:18,title:"Longest Palindromic Substring",difficulty:"Medium",description:"Given a string s, return the longest palindromic substring in s.",example:"Input: s = 'babad'\nOutput: 'bab' or 'aba'",testCase:"s = 'cbbd'",expectedOutput:"bb",solution:"def longestPalindrome(s):\n    def expandAroundCenter(left, right):\n        while left >= 0 and right < len(s) and s[left] == s[right]:\n            left -= 1\n            right += 1\n        return s[left+1:right]\n    longest = ''\n    for i in range(len(s)):\n        odd = expandAroundCenter(i, i)\n        even = expandAroundCenter(i, i+1)\n        longest = max([longest, odd, even], key=len)\n    return longest"},
+            {day:10,id:19,title:"Lowest Common Ancestor of BST",difficulty:"Medium",description:"Given a BST, find the lowest common ancestor (LCA) of two given nodes.",example:"Input: root = [6,2,8,0,4,7,9], p = 2, q = 8\nOutput: 6",testCase:"root = [6,2,8,0,4,7,9], p = 2, q = 4",expectedOutput:"2",solution:"def lowestCommonAncestor(root, p, q):\n    while root:\n        if p.val < root.val and q.val < root.val:\n            root = root.left\n        elif p.val > root.val and q.val > root.val:\n            root = root.right\n        else:\n            return root"},
+            {day:10,id:20,title:"Word Break",difficulty:"Medium",description:"Given a string s and a dictionary wordDict, return true if s can be segmented into dictionary words.",example:"Input: s = 'leetcode', wordDict = ['leet','code']\nOutput: True",testCase:"s = 'applepenapple', wordDict = ['apple','pen']",expectedOutput:"True",solution:"def wordBreak(s, wordDict):\n    dp = [False] * (len(s) + 1)\n    dp[0] = True\n    word_set = set(wordDict)\n    for i in range(1, len(s) + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[len(s)]"}
+        ];
+
+        let currentProblem = 0;
+        let currentDay = 1;
+        let completedProblems = [];
+
+        function normalize(code) {
+            return code.toLowerCase().replace(/\s+/g, '').replace(/['"]/g, '').trim();
+        }
+
+        function getDifficultyColor(diff) {
+            if (diff === 'Easy') return 'text-green-600 bg-green-100';
+            if (diff === 'Medium') return 'text-yellow-600 bg-yellow-100';
+            return 'text-red-600 bg-red-100';
+        }
+
+        function loadProblem() {
+            const p = problems[currentProblem];
+            document.getElementById('dayLabel').textContent = `Day ${p.day}`;
+            document.getElementById('problemLabel').textContent = `Problem ${p.id}`;
+            document.getElementById('problemTitle').textContent = p.title;
+            document.getElementById('difficulty').textContent = p.difficulty;
+            document.getElementById('difficulty').className = `px-3 py-1 rounded-full text-sm font-semibold ${getDifficultyColor(p.difficulty)}`;
+            document.getElementById('description').textContent = p.description;
+            document.getElementById('example').textContent = p.example;
+            document.getElementById('testCase').textContent = p.testCase;
+            document.getElementById('expectedOutput').textContent = p.expectedOutput;
+            document.getElementById('userAnswer').value = '';
+            document.getElementById('errorBox').classList.add('hidden');
+            document.getElementById('successBox').classList.add('hidden');
+            currentDay = p.day;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            document.getElementById('progress').textContent = `${completedProblems.length}/20`;
+            
+            let html = '';
+            for (let day = 1; day <= 10; day++) {
+                const dayProbs = problems.filter(p => p.day === day);
+                const completed = dayProbs.filter(p => completedProblems.includes(p.id)).length;
+                const isCurrentDay = day === currentDay;
+                html += `<div class="p-3 rounded-lg border-2 ${isCurrentDay ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}">
+                    <div class="flex justify-between">
+                        <span class="font-semibold ${isCurrentDay ? 'text-indigo-900' : 'text-gray-700'}">Day ${day}</span>
+                        <span class="text-sm text-gray-600">${completed}/2</span>
+                    </div>
+                    <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full" style="width: ${completed/2*100}%"></div>
+                    </div>
+                </div>`;
+            }
+            document.getElementById('dayProgress').innerHTML = html;
+
+            if (completedProblems.length === 20) {
+                document.getElementById('completionBox').classList.remove('hidden');
+            }
+        }
+
+        function handleSubmit() {
+            const userAnswer = document.getElementById('userAnswer').value;
+            const p = problems[currentProblem];
+            
+            document.getElementById('errorBox').classList.add('hidden');
+            document.getElementById('successBox').classList.add('hidden');
+            
+            if (!userAnswer.trim()) {
+                document.getElementById('errorMessage').textContent = 'Please enter a solution';
+                document.getElementById('errorBox').classList.remove('hidden');
+                return;
+            }
+            
+            if (normalize(userAnswer) === normalize(p.solution)) {
+                document.getElementById('successBox').classList.remove('hidden');
+                if (!completedProblems.includes(p.id)) {
+                    completedProblems.push(p.id);
+                }
+                
+                setTimeout(() => {
+                    document.getElementById('successBox').classList.add('hidden');
+                    if (currentProblem < problems.length - 1) {
+                        currentProblem++;
+                        loadProblem();
+                    }
+                }, 1500);
+            } else {
+                document.getElementById('errorMessage').textContent = 'Incorrect solution. Try again!';
+                document.getElementById('errorBox').classList.remove('hidden');
+            }
+        }
+
+        function handleSecretCode() {
+            const code = document.getElementById('secretCode').value;
+            if (code === '112') {
+                document.getElementById('solutionCode').textContent = problems[currentProblem].solution;
+                document.getElementById('solutionBox').classList.remove('hidden');
+                document.getElementById('secretCode').value = '';
+            } else if (code !== '') {
+                document.getElementById('errorMessage').textContent = 'Invalid secret code';
+                document.getElementById('errorBox').classList.remove('hidden');
+                document.getElementById('secretCode').value = '';
+            }
+        }
+
+        function hideSolution() {
+            document.getElementById('solutionBox').classList.add('hidden');
+        }
+
+        window.onload = () => {
+            loadProblem();
+        };
+    </script>
+</body>
+</html>
